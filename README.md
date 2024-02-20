@@ -3,7 +3,7 @@
 This tool allows you to convert your Bitwarden vault data to a format that can be imported into KeePassXC.
 
 ## Prerequisites
-* Python 3
+* Python 3.10 or higher
 * Your Bitwarden vault data exported as a JSON file
 
 ## Usage
