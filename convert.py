@@ -18,7 +18,7 @@ def load_folders(folder_data):
 
 def process_item(item, folders):
     """
-    Process an item and extract relevant information.
+    Process a vault item.
 
     Args:
         item (dict): The item to process.
@@ -46,6 +46,9 @@ def process_item(item, folders):
         if item.get("type") == 1 and item.get("login", {}).get("uris")
         else ""
     )
+    ## If the item has additional fields, we add them to the `Notes` field. 
+    ## IMPORTANT: If the additional field was of type "hidden", it will be shown in plain text inside the `Notes` field!
+    ## TODO: Map to KeePassXC entry's 'Advanced' > 'Additional Attributes' field (with "protect" flag set to "true" for hidden fields)
     notes = item.get("notes", "") or ""
     if item.get("fields"):
         for field in item["fields"]:
@@ -58,24 +61,24 @@ def process_item(item, folders):
 
     return [group, title, username, password, url, notes]
 
-def convert_bitwarden_to_keepassxc(bitwarden_export_path):
+def convert(bw_file):
     """
     Converts a Bitwarden export file to a KeePassXC-compatible CSV file.
 
     Args:
-        bitwarden_export_path (str): The file path of the Bitwarden export file.
+        bw_file (str): The file path of the exported bitwarden file.
 
     Returns:
         None
     """
-    keepassxc_csv_path = bitwarden_export_path.rsplit('.', 1)[0] + '_keepassxc.csv'
+    csv_path = bw_file.rsplit('.', 1)[0] + '_keepassxc.csv'
 
-    with open(bitwarden_export_path, "r", encoding="utf-8") as json_file:
+    with open(bw_file, "r", encoding="utf-8") as json_file:
         data = json.load(json_file)
         folders = load_folders(data.get("folders", []))
         items = data.get("items", [])
 
-        with open(keepassxc_csv_path, "w", newline="", encoding="utf-8") as csv_file:
+        with open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerow(
                 ["Group", "Title", "Username", "Password", "URL", "Notes"]
@@ -87,6 +90,6 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python json2csv.py bitwarden_exported_json_file.json")
         sys.exit(1)
-    bitwarden_export_path = sys.argv[1]
-    convert_bitwarden_to_keepassxc(bitwarden_export_path)
-    print(f"Conversion complete. KeePassXC CSV file created at {bitwarden_export_path.rsplit('.', 1)[0] + '_keepassxc.csv'}")
+    bw_file = sys.argv[1]
+    convert(bw_file)
+    print(f"Conversion complete. KeePassXC CSV file created at {bw_file.rsplit('.', 1)[0] + '_keepassxc.csv'}")
