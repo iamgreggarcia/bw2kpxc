@@ -32,3 +32,8 @@ This will create a new CSV file in the same directory with the name <name_of_exp
 7. Click "OK" to complete the import process.
 
 Now, your Bitwarden vault data should be successfully imported into KeePassXC.
+
+## Limitations and future work
+1. TOTP is not transfered
+2. 'Custom Fields' in Bitwarden are added to the 'Notes' field in KeePassXC in _plain text_.
+    * TODO: map custom fields to KeePassXC entry's 'Advanced' > 'Additional Attributes' field
